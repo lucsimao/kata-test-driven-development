@@ -32,5 +32,17 @@ describe('Tests', () => {
 
       expect(result).toBe(fakeAxiosResult.data);
     });
+
+    it('should throw when axios throws', async () => {
+      const { sut } = makeSut();
+      const url = 'any_url';
+      jest
+        .spyOn(axios, 'get')
+        .mockRejectedValueOnce(new Error('any_axios_error'));
+
+      const promise = sut.get(url);
+
+      await expect(promise).rejects.toThrow(new Error('any_axios_error'));
+    });
   });
 });
