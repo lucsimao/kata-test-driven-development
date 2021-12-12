@@ -4,6 +4,7 @@ export class Client {
     const { data } = await axios.get(
       'https://jsonplaceholder.typicode.com/users'
     );
+
     const bizEmails = this.filterBizEmail(data);
     const result = this.mapUserName(bizEmails);
 
@@ -27,12 +28,17 @@ export class Client {
       'https://jsonplaceholder.typicode.com/users'
     );
 
-    const result = [];
-    for (let user of data) {
-      const userName = user.username;
-      const companyName = user.company.name;
-      result.push({ user: userName, company: companyName });
-    }
+    const result = this.mapUserAndCompany(data);
+
+    return result;
+  }
+
+  private mapUserAndCompany(users: any[]) {
+    const result = users.map((user: any) => ({
+      user: user?.username,
+      company: user?.company?.name,
+    }));
+
     return result;
   }
 }
