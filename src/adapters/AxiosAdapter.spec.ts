@@ -3,7 +3,7 @@ import axios from 'axios';
 
 jest.mock('axios');
 
-const fakeAxiosResult = { data: { name: 'any_name' } };
+const fakeAxiosResult = { data: [{ name: 'any_name' }] };
 jest.spyOn(axios, 'get').mockResolvedValue(fakeAxiosResult);
 
 const makeSut = () => {
@@ -22,6 +22,15 @@ describe('Tests', () => {
       await sut.get(url);
 
       expect(getSpy).toBeCalledWith(url);
+    });
+
+    it('should return axios.data when method is called', async () => {
+      const { sut } = makeSut();
+      const url = 'any_url';
+
+      const result = await sut.get(url);
+
+      expect(result).toBe(fakeAxiosResult.data);
     });
   });
 });
