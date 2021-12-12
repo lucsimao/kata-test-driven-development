@@ -51,5 +51,16 @@ describe('Client Test', () => {
 
       expect(result).toEqual(['any_name']);
     });
+
+    it('SHOULD throw WHEN axios throws', async () => {
+      const { sut } = makeSut();
+      jest
+        .spyOn(axios, 'get')
+        .mockRejectedValueOnce(new Error('any_axios_error'));
+
+      const promise = sut.getBizEmailUsers();
+
+      await expect(promise).rejects.toThrow(new Error('any_axios_error'));
+    });
   });
 });
