@@ -63,4 +63,16 @@ describe('Client Test', () => {
       await expect(promise).rejects.toThrow(new Error('any_axios_error'));
     });
   });
+
+  describe('getUsersNameAndCompanyFromUsers', () => {
+    it('SHOULD call axios.get with url WHEN method is called', () => {
+      const { sut } = makeSut();
+      const getSpy = jest.spyOn(axios, 'get');
+
+      sut.getUsersNameAndCompanyFromUsers();
+      expect(getSpy).toBeCalledWith(
+        'https://jsonplaceholder.typicode.com/users'
+      );
+    });
+  });
 });
