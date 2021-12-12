@@ -1,7 +1,10 @@
 import { Client } from './Client';
 import axios from 'axios';
 
+jest.mock('axios');
+
 const fakeBizUser = { email: 'any_email.biz' };
+axios.get = jest.fn().mockResolvedValue(fakeBizUser);
 
 const makeSut = () => {
   const sut = new Client();
@@ -21,10 +24,10 @@ describe('Client Test', () => {
       );
     });
 
-    it('SHOULD return users who have .biz email WHEN method is called', () => {
+    it('SHOULD return users who have .biz email WHEN method is called', async () => {
       const { sut } = makeSut();
 
-      const result = sut.getBizEmailUsers();
+      const result = await sut.getBizEmailUsers();
 
       expect(result).toEqual(fakeBizUser);
     });

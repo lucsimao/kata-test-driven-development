@@ -1,7 +1,9 @@
 import axios from 'axios';
 export class Client {
-  getBizEmailUsers(): unknown {
-    axios.get('https://jsonplaceholder.typicode.com/users');
-    return { email: 'any_email.biz' };
+  async getBizEmailUsers(): Promise<unknown> {
+    const result = await axios.get(
+      'https://jsonplaceholder.typicode.com/users'
+    );
+    return result;
   }
 }
