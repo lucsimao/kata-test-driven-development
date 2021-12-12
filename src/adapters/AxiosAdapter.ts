@@ -5,7 +5,8 @@ import axios from 'axios';
 export class AxiosAdapter implements IHttpClient {
   async get(url: string): Promise<IUser[]> {
     const axiosResponse = await axios.get<IUser[]>(url);
+    const result = axiosResponse.data;
 
-    return [{ name: 'any_name' }] as IUser[];
+    return result;
   }
 }
