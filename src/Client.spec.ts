@@ -31,5 +31,14 @@ describe('Client Test', () => {
 
       expect(result).toEqual(fakeBizUser);
     });
+
+    it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(axios, 'get').mockResolvedValueOnce([]);
+
+      const result = await sut.getBizEmailUsers();
+
+      expect(result).toEqual([]);
+    });
   });
 });
