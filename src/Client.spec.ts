@@ -75,6 +75,15 @@ describe('Client Test', () => {
       );
     });
 
+    it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
+      const { sut } = makeSut();
+      jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: [] });
+
+      const result = await sut.getUsersNameAndCompanyFromUsers();
+
+      expect(result).toEqual([]);
+    });
+
     it('SHOULD throw WHEN axios throws', async () => {
       const { sut } = makeSut();
       jest
