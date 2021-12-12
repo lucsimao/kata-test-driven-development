@@ -1,7 +1,6 @@
-import { Client } from './Client';
-import { IHttpClient } from './protocols/IHttpClient';
+import { createHttpClient } from './factories/HttpClientFactory';
 
-const client = new Client({} as IHttpClient);
+const client = createHttpClient('https://jsonplaceholder.typicode.com');
 
 /**
  * 1.  O nome de todos os usuários que tem um email terminado com .biz
