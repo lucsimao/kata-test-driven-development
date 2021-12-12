@@ -1,30 +1,33 @@
 import { Client } from './Client';
-import axios from 'axios';
+import { IHttpClient } from './protocols/IHttpClient';
+import { IUser } from './models/IUser';
 
-jest.mock('axios');
-
-const fakeBizUser = {
-  data: [
-    {
-      name: 'any_name',
-      username: 'any_username',
-      email: 'any_email.biz',
-      company: { name: 'any_company' },
-    },
-  ],
-};
-jest.spyOn(axios, 'get').mockResolvedValue(fakeBizUser);
+const fakeBizUser = [
+  {
+    name: 'any_name',
+    username: 'any_username',
+    email: 'any_email.biz',
+    company: { name: 'any_company' },
+  },
+];
 
 const makeSut = () => {
-  const sut = new Client();
-  return { sut };
+  class HttpClientStub implements IHttpClient {
+    async get(_url: string): Promise<IUser[]> {
+      return fakeBizUser;
+    }
+  }
+  const httpClientStub = new HttpClientStub();
+
+  const sut = new Client(httpClientStub);
+  return { sut, httpClientStub };
 };
 
 describe('Client Test', () => {
   describe('getBizEmailUsers', () => {
-    it('SHOULD call axios.get with url WHEN method is called', () => {
-      const { sut } = makeSut();
-      const getSpy = jest.spyOn(axios, 'get');
+    it('SHOULD call httpClient.get with url WHEN method is called', () => {
+      const { sut, httpClientStub } = makeSut();
+      const getSpy = jest.spyOn(httpClientStub, 'get');
 
       sut.getBizEmailUsers();
 
@@ -33,20 +36,25 @@ describe('Client Test', () => {
       );
     });
 
-    it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
-      const { sut } = makeSut();
-      jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: [] });
+    it('SHOULD return an empty array WHEN httpClient returns an empty array', async () => {
+      const { sut, httpClientStub } = makeSut();
+      jest.spyOn(httpClientStub, 'get').mockResolvedValueOnce([]);
 
       const result = await sut.getBizEmailUsers();
 
       expect(result).toEqual([]);
     });
 
-    it('SHOULD return an empty array WHEN axios returns non empty array but with no .biz email', async () => {
-      const { sut } = makeSut();
-      jest
-        .spyOn(axios, 'get')
-        .mockResolvedValueOnce({ data: [{ email: 'invalid_email.net' }] });
+    it('SHOULD return an empty array WHEN httpClient returns non empty array but with no .biz email', async () => {
+      const { sut, httpClientStub } = makeSut();
+      jest.spyOn(httpClientStub, 'get').mockResolvedValueOnce([
+        {
+          name: 'any_name',
+          username: 'any_username',
+          email: 'invalid_email.net',
+          company: { name: 'any_company' },
+        },
+      ]);
 
       const result = await sut.getBizEmailUsers();
 
@@ -61,22 +69,22 @@ describe('Client Test', () => {
       expect(result).toEqual(['any_name']);
     });
 
-    it('SHOULD throw WHEN axios throws', async () => {
-      const { sut } = makeSut();
+    it('SHOULD throw WHEN httpClient throws', async () => {
+      const { sut, httpClientStub } = makeSut();
       jest
-        .spyOn(axios, 'get')
-        .mockRejectedValueOnce(new Error('any_axios_error'));
+        .spyOn(httpClientStub, 'get')
+        .mockRejectedValueOnce(new Error('any_httpClient_error'));
 
       const promise = sut.getBizEmailUsers();
 
-      await expect(promise).rejects.toThrow(new Error('any_axios_error'));
+      await expect(promise).rejects.toThrow(new Error('any_httpClient_error'));
     });
   });
 
   describe('getUsersNameAndCompanyFromUsers', () => {
-    it('SHOULD call axios.get with url WHEN method is called', () => {
-      const { sut } = makeSut();
-      const getSpy = jest.spyOn(axios, 'get');
+    it('SHOULD call httpClient.get with url WHEN method is called', () => {
+      const { sut, httpClientStub } = makeSut();
+      const getSpy = jest.spyOn(httpClientStub, 'get');
 
       sut.getUsersNameAndCompanyFromUsers();
       expect(getSpy).toBeCalledWith(
@@ -84,16 +92,16 @@ describe('Client Test', () => {
       );
     });
 
-    it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
-      const { sut } = makeSut();
-      jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: [] });
+    it('SHOULD return an empty array WHEN httpClient returns an empty array', async () => {
+      const { sut, httpClientStub } = makeSut();
+      jest.spyOn(httpClientStub, 'get').mockResolvedValueOnce([]);
 
       const result = await sut.getUsersNameAndCompanyFromUsers();
 
       expect(result).toEqual([]);
     });
 
-    it('SHOULD return user name as user and company name as company WHEN axios return a valid array', async () => {
+    it('SHOULD return user name as user and company name as company WHEN httpClient return a valid array', async () => {
       const { sut } = makeSut();
 
       const result = await sut.getUsersNameAndCompanyFromUsers();
@@ -106,15 +114,15 @@ describe('Client Test', () => {
       ]);
     });
 
-    it('SHOULD throw WHEN axios throws', async () => {
-      const { sut } = makeSut();
+    it('SHOULD throw WHEN httpClient throws', async () => {
+      const { sut, httpClientStub } = makeSut();
       jest
-        .spyOn(axios, 'get')
-        .mockRejectedValueOnce(new Error('any_axios_error'));
+        .spyOn(httpClientStub, 'get')
+        .mockRejectedValueOnce(new Error('any_httpClient_error'));
 
       const promise = sut.getUsersNameAndCompanyFromUsers();
 
-      await expect(promise).rejects.toThrow(new Error('any_axios_error'));
+      await expect(promise).rejects.toThrow(new Error('any_httpClient_error'));
     });
   });
 });
