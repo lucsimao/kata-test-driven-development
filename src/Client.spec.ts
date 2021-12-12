@@ -11,29 +11,36 @@ const fakeBizUser = [
   },
 ];
 
-const makeSut = () => {
+const makeHttpClientStub = () => {
   class HttpClientStub implements IHttpClient {
     async get(_url: string): Promise<IUser[]> {
       return fakeBizUser;
     }
   }
-  const httpClientStub = new HttpClientStub();
 
-  const sut = new Client(httpClientStub);
-  return { sut, httpClientStub };
+  const result = new HttpClientStub();
+
+  return result;
+};
+
+const makeSut = () => {
+  const fakeUrl = 'any_url';
+  const httpClientStub = makeHttpClientStub();
+
+  const sut = new Client(httpClientStub, fakeUrl);
+
+  return { sut, httpClientStub, fakeUrl };
 };
 
 describe('Client Test', () => {
   describe('getBizEmailUsers', () => {
     it('SHOULD call httpClient.get with url WHEN method is called', () => {
-      const { sut, httpClientStub } = makeSut();
+      const { sut, httpClientStub, fakeUrl } = makeSut();
       const getSpy = jest.spyOn(httpClientStub, 'get');
 
       sut.getBizEmailUsers();
 
-      expect(getSpy).toBeCalledWith(
-        'https://jsonplaceholder.typicode.com/users'
-      );
+      expect(getSpy).toBeCalledWith(`${fakeUrl}/users`);
     });
 
     it('SHOULD return an empty array WHEN httpClient returns an empty array', async () => {
@@ -83,13 +90,12 @@ describe('Client Test', () => {
 
   describe('getUsersNameAndCompanyFromUsers', () => {
     it('SHOULD call httpClient.get with url WHEN method is called', () => {
-      const { sut, httpClientStub } = makeSut();
+      const { sut, httpClientStub, fakeUrl } = makeSut();
       const getSpy = jest.spyOn(httpClientStub, 'get');
 
-      sut.getUsersNameAndCompanyFromUsers();
-      expect(getSpy).toBeCalledWith(
-        'https://jsonplaceholder.typicode.com/users'
-      );
+      sut.getBizEmailUsers();
+
+      expect(getSpy).toBeCalledWith(`${fakeUrl}/users`);
     });
 
     it('SHOULD return an empty array WHEN httpClient returns an empty array', async () => {

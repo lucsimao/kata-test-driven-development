@@ -8,12 +8,14 @@ import { IHttpClient } from './protocols/IHttpClient';
 import { IMappedCompanyUser } from './services/interfaces/IMappedCompanyUser';
 
 export class Client {
-  constructor(private readonly httpClient: IHttpClient) {}
+  constructor(
+    private readonly httpClient: IHttpClient,
+    private readonly url: string
+  ) {}
 
   async getBizEmailUsers(): Promise<string[]> {
-    const httpClientResult = await this.httpClient.get(
-      'https://jsonplaceholder.typicode.com/users'
-    );
+    const endpoint = `${this.url}/users`;
+    const httpClientResult = await this.httpClient.get(endpoint);
 
     const bizEmails = filterBizEmail(httpClientResult);
     const result = mapUserName(bizEmails);
@@ -22,9 +24,8 @@ export class Client {
   }
 
   async getUsersNameAndCompanyFromUsers(): Promise<IMappedCompanyUser[]> {
-    const httpClientResult = await this.httpClient.get(
-      'https://jsonplaceholder.typicode.com/users'
-    );
+    const endpoint = `${this.url}/users`;
+    const httpClientResult = await this.httpClient.get(endpoint);
 
     const result = mapUserAndCompany(httpClientResult);
 
