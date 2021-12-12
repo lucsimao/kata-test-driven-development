@@ -28,6 +28,12 @@ export class Client {
       'https://jsonplaceholder.typicode.com/users'
     );
 
-    return data;
+    const result = [];
+    for (let user of data) {
+      const userName = user.username;
+      const companyName = user.company.name;
+      result.push({ user: userName, company: companyName });
+    }
+    return result;
   }
 }
