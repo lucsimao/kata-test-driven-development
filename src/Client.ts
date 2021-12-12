@@ -1,5 +1,5 @@
 export class Client {
-  getBizEmailUsers() {
+  getBizEmailUsers(): unknown {
     return { email: 'any_email.biz' };
   }
 }
