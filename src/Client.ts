@@ -10,12 +10,7 @@ export class Client {
     for (let user of data) {
       const email = user.email;
 
-      if (
-        email.charAt(email.length - 4) === '.' &&
-        email.charAt(email.length - 3) === 'b' &&
-        email.charAt(email.length - 2) === 'i' &&
-        email.charAt(email.length - 1) === 'z'
-      ) {
+      if (email.includes('.biz')) {
         result.push(user.name);
       }
     }
