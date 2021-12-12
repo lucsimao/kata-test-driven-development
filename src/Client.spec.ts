@@ -3,8 +3,8 @@ import axios from 'axios';
 
 jest.mock('axios');
 
-const fakeBizUser = { email: 'any_email.biz' };
-axios.get = jest.fn().mockResolvedValue(fakeBizUser);
+const fakeBizUser = { data: [{ name: 'any_name', email: 'any_email.biz' }] };
+jest.spyOn(axios, 'get').mockResolvedValue(fakeBizUser);
 
 const makeSut = () => {
   const sut = new Client();
@@ -29,12 +29,23 @@ describe('Client Test', () => {
 
       const result = await sut.getBizEmailUsers();
 
-      expect(result).toEqual(fakeBizUser);
+      expect(result).toEqual(['any_name']);
     });
 
     it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
       const { sut } = makeSut();
-      jest.spyOn(axios, 'get').mockResolvedValueOnce([]);
+      jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: [] });
+
+      const result = await sut.getBizEmailUsers();
+
+      expect(result).toEqual([]);
+    });
+
+    it('SHOULD return an empty array WHEN axios returns non empty array but with no .biz email', async () => {
+      const { sut } = makeSut();
+      jest
+        .spyOn(axios, 'get')
+        .mockResolvedValueOnce({ data: [{ email: 'invalid_email.net' }] });
 
       const result = await sut.getBizEmailUsers();
 
