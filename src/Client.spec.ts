@@ -3,7 +3,16 @@ import axios from 'axios';
 
 jest.mock('axios');
 
-const fakeBizUser = { data: [{ name: 'any_name', email: 'any_email.biz' }] };
+const fakeBizUser = {
+  data: [
+    {
+      name: 'any_name',
+      username: 'any_username',
+      email: 'any_email.biz',
+      company: { name: 'any_company' },
+    },
+  ],
+};
 jest.spyOn(axios, 'get').mockResolvedValue(fakeBizUser);
 
 const makeSut = () => {
@@ -82,6 +91,19 @@ describe('Client Test', () => {
       const result = await sut.getUsersNameAndCompanyFromUsers();
 
       expect(result).toEqual([]);
+    });
+
+    it('SHOULD return user name as user and company name as company WHEN axios return a valid array', async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.getUsersNameAndCompanyFromUsers();
+
+      expect(result).toEqual([
+        {
+          user: 'any_username',
+          company: 'any_company',
+        },
+      ]);
     });
 
     it('SHOULD throw WHEN axios throws', async () => {
