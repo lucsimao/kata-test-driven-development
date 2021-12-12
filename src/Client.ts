@@ -5,15 +5,9 @@ export class Client {
       'https://jsonplaceholder.typicode.com/users'
     );
 
-    const result = [];
-
-    for (let user of data) {
-      const email = user.email;
-
-      if (email.includes('.biz')) {
-        result.push(user.name);
-      }
-    }
+    const result = data
+      .filter((user: any) => user.email.includes('.biz'))
+      .map((user: any) => user.name);
 
     return result;
   }
