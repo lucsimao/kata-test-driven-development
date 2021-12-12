@@ -24,14 +24,6 @@ describe('Client Test', () => {
       );
     });
 
-    it('SHOULD return users who have .biz email WHEN method is called', async () => {
-      const { sut } = makeSut();
-
-      const result = await sut.getBizEmailUsers();
-
-      expect(result).toEqual(['any_name']);
-    });
-
     it('SHOULD return an empty array WHEN axios returns an empty array', async () => {
       const { sut } = makeSut();
       jest.spyOn(axios, 'get').mockResolvedValueOnce({ data: [] });
@@ -50,6 +42,14 @@ describe('Client Test', () => {
       const result = await sut.getBizEmailUsers();
 
       expect(result).toEqual([]);
+    });
+
+    it('SHOULD return users who have .biz email WHEN method is called', async () => {
+      const { sut } = makeSut();
+
+      const result = await sut.getBizEmailUsers();
+
+      expect(result).toEqual(['any_name']);
     });
   });
 });
