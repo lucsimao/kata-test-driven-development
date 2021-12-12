@@ -22,4 +22,10 @@ export class Client {
 
     return result;
   }
+
+  async getUsersNameAndCompanyFromUsers() {
+    const { data } = await axios.get(
+      'https://jsonplaceholder.typicode.com/users'
+    );
+  }
 }
