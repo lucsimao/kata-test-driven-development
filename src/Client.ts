@@ -4,10 +4,11 @@ import {
   mapUserName,
 } from './services/ClientService';
 
+import { IMappedCompanyUser } from './services/interfaces/IMappedCompanyUser';
 import axios from 'axios';
 
 export class Client {
-  async getBizEmailUsers(): Promise<unknown> {
+  async getBizEmailUsers(): Promise<string[]> {
     const { data } = await axios.get(
       'https://jsonplaceholder.typicode.com/users'
     );
@@ -18,7 +19,7 @@ export class Client {
     return result;
   }
 
-  async getUsersNameAndCompanyFromUsers() {
+  async getUsersNameAndCompanyFromUsers(): Promise<IMappedCompanyUser[]> {
     const { data } = await axios.get(
       'https://jsonplaceholder.typicode.com/users'
     );
